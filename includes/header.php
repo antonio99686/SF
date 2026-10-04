@@ -4,6 +4,7 @@ $menu = [
     'eventos.php'      => '🎉 Eventos',
     'mensalidades.php' => '💰 Mensalidades',
     'vestimentas.php'  => '👕 Vestimentas',
+    'documentos.php'   => '🖨️ Documentos',
     'perfil.php'       => '👤 Perfil',
 ];
 if (isCoordenador()) {
