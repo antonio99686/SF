@@ -1,6 +1,9 @@
 <?php
 /* ============================================================
    HELPERS PARA GERAÇÃO DE PDF
+   ------------------------------------------------------------
+   Arquivo central para geração de PDFs com Dompdf.
+   Contém: logo em base64, instância configurada, renderização.
    ============================================================ */
 
 require_once __DIR__ . '/../config/database.php';
@@ -19,28 +22,38 @@ function logoBase64(): string {
     if (!file_exists($caminho)) {
         return '';
     }
-    $tipo = mime_content_type($caminho);
+    $tipo  = mime_content_type($caminho) ?: 'image/png';
     $dados = base64_encode(file_get_contents($caminho));
     return "data:$tipo;base64,$dados";
 }
 
 /**
  * Cria uma instância do Dompdf já configurada.
+ *
+ * @param string         $orientacao  'portrait' ou 'landscape'
+ * @param string|array   $papel       'A4', 'A5', 'Letter'
+ *                                    ou array [0, 0, largura, altura] em pontos
  */
-function novoPdf(string $orientacao = 'portrait', string $papel = 'A4'): Dompdf {
+function novoPdf(string $orientacao = 'portrait', $papel = 'A4'): Dompdf {
     $options = new Options();
-    $options->set('isRemoteEnabled', true);   // permite carregar imagens locais
+    $options->set('isRemoteEnabled', true);        // permite carregar imagens
     $options->set('isHtml5ParserEnabled', true);
     $options->set('defaultFont', 'DejaVu Sans');
     $options->set('chroot', realpath(__DIR__ . '/..'));  // raiz permitida
 
     $dompdf = new Dompdf($options);
     $dompdf->setPaper($papel, $orientacao);
+
     return $dompdf;
 }
 
 /**
- * Renderiza o HTML no PDF e envia para o navegador (download ou inline).
+ * Renderiza o HTML no PDF e envia para o navegador.
+ *
+ * @param Dompdf $dompdf
+ * @param string $html
+ * @param string $nomeArquivo
+ * @param bool   $download    true = baixa, false = abre inline
  */
 function renderizarPdf(Dompdf $dompdf, string $html, string $nomeArquivo, bool $download = true): void {
     $dompdf->loadHtml($html, 'UTF-8');

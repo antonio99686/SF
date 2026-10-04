@@ -9,11 +9,11 @@
 // ------------------------------------------------------------
 // CONFIGURAÇÕES — ajuste conforme seu ambiente
 // ------------------------------------------------------------
-$DB_HOST = 'localhost';
-$DB_NAME = 'SF';
-$DB_USER = 'root';
-$DB_PASS = '';           // em produção, use senha forte
-$DB_PORT = 3306;
+$DB_HOST    = 'localhost';
+$DB_NAME    = 'SF';
+$DB_USER    = 'root';
+$DB_PASS    = '';           // em produção, use senha forte
+$DB_PORT    = 3306;
 $DB_CHARSET = 'utf8mb4';
 
 // ------------------------------------------------------------
@@ -44,11 +44,15 @@ $options = [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,      // prepared statements reais
     PDO::ATTR_PERSISTENT         => false,
-    PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '-03:00'", // Horário de Brasília
 ];
 
 try {
     $pdo = new PDO($dsn, $DB_USER, $DB_PASS, $options);
+
+    // Define o timezone do Brasil após conectar
+    // (evita a constante obsoleta PDO::MYSQL_ATTR_INIT_COMMAND do PHP 8.5)
+    $pdo->exec("SET time_zone = '-03:00'");
+
 } catch (PDOException $e) {
     // Loga o erro real, mas mostra mensagem genérica ao usuário
     error_log('[DB ERROR] ' . $e->getMessage());
@@ -66,13 +70,13 @@ try {
 // ------------------------------------------------------------
 define('BASE_URL', $emProducao
     ? 'https://seudominio.com.br'
-    : 'http://localhost/sentinela'
+    : 'http://localhost/SF'          // 👈 ajustado para o nome da sua pasta
 );
 
-define('APP_NOME', 'Piquete Sentinela da Fronteira');
-define('APP_SUB',  'COHAB II · Uruguaiana/RS');
+define('APP_NOME',     'Piquete Sentinela da Fronteira');
+define('APP_SUB',      'COHAB II · Uruguaiana/RS');
 define('APP_FUNDACAO', '17/06/1989');
-define('APP_FRASE', '"Unindo forças é bem mais fácil"');
+define('APP_FRASE',    '"Unindo forças é bem mais fácil"');
 
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('LOGO_PATH',  BASE_URL . '/assets/img/logo.png');

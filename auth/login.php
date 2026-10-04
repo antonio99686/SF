@@ -11,7 +11,7 @@ if (usuarioLogado()) {
         // Coordenador logado tentando abrir a área pública → manda pra área dele
         header('Location: admin/login.php');
     } else {
-        header('Location: ../pages/dashboard.php');
+        header('Location: ../../pages/dashboard.php');
     }
     exit;
 }
